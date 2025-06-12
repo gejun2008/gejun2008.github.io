@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>南京市著名旅游景点导览</title>
+  <!-- Tailwind CSS -->
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- 中文字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js"></script>
+  <style>
+    body {
+      font-family: 'Noto Serif SC', 'Noto Sans SC', serif, sans-serif;
+      background: #f8f5e6 url('https://img.zcool.cn/community/01b6e95d7e2e2fa8012193a3e7e2e2.jpg') repeat;
+      /* 仿古纸张纹理背景，可替换为本地或其他纹理图 */
+      color: #3e2c1a;
+    }
+    .section-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.1em;
+      color: #7c4a03;
+      border-left: 4px solid #c8b08b;
+      padding-left: 0.5em;
+      margin-bottom: 0.5em;
+    }
+    .scenic-card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(120, 90, 40, 0.08);
+      margin-bottom: 1.5rem;
+      border: 1px solid #e5decf;
+    }
+    .scenic-header {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      color: #5a3a1a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.2rem;
+    }
+    .scenic-header:hover {
+      background: #f3e9d7;
+    }
+    .audio-btn {
+      color: #b8860b;
+      font-size: 1.3rem;
+      margin-left: 0.5em;
+      cursor: pointer;
+    }
+    .audio-btn.active {
+      color: #e67e22;
+    }
+    .scenic-detail {
+      padding: 0 1.2rem 1.2rem 1.2rem;
+      font-size: 1rem;
+      line-height: 1.8;
+      font-family: 'Noto Serif SC', serif;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      opacity: 0.15;
+      font-size: 2rem;
+      pointer-events: none;
+      font-family: 'Noto Serif SC', serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-4">
+  <div class="max-w-lg w-full px-2">
+    <h1 class="text-2xl md:text-3xl font-bold text-center section-title mb-6 mt-2">南京市著名旅游景点导览</h1>
+    <div class="mb-4 text-center text-base text-gray-700">南京，这座历史悠久、文化底蕴深厚的城市，拥有众多令人流连忘返的旅游胜地。以下为您精选四大景点导览。</div>
+    <div x-data="scenicAudioGuide()">
+      <!-- 景点卡片列表 -->
+      <template x-for="scenic in scenics" :key="scenic.name">
+        <div class="scenic-card">
+          <div class="scenic-header" @click="toggleDetail(scenic)">
+            <span>
+              <i class="fa-solid fa-landmark mr-2"></i>
+              <span x-text="scenic.name"></span>
+            </span>
+            <button type="button" class="audio-btn" :class="{'active': currentAudio === scenic.audio}" @click.stop="playAudio(scenic.audio)">
+              <i :class="currentAudio === scenic.audio && isPlaying ? 'fa-pause-circle' : 'fa-play-circle'" class="fa-solid"></i>
+            </button>
+          </div>
+          <div class="scenic-detail" x-show="scenic.show" x-transition>
+            <div x-html="scenic.detail"></div>
+          </div>
+        </div>
+      </template>
+      <audio id="audioPlayer" preload="none"></audio>
+    </div>
+  </div>
+  <div class="watermark">南京导览</div>
+  <script>
+    function scenicAudioGuide() {
+      return {
+        scenics: [
+          {
+            name: '古鸡鸣寺',
+            audio: 'https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Ftts-mp3-20250612151636-HGADRelp.mp3?Expires=86401749712596&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=IF8zXDPP4KrdvAsNSlRyi2Uspa4%3D',
+            detail: `<b>简介：</b>古鸡鸣寺位于南京市玄武区鸡鸣寺路，是南京最古老的佛教寺庙之一，始建于西晋永康元年（300年），距今已有1700多年历史。寺庙依山而建，环境幽静，香火鼎盛，是南京著名的祈福胜地。<br><b>历史沿革：</b>鸡鸣寺历经多次修缮与扩建，见证了南京城的历史变迁。明清时期尤为兴盛，现存建筑多为清代遗构。<br><b>主要看点：</b><ul><li>山门、天王殿、大雄宝殿、观音殿等古建筑</li><li>鸡鸣寺塔，登塔可俯瞰玄武湖美景</li><li>春季樱花盛开，成为南京赏樱胜地之一</li></ul><b>游玩建议：</b>建议清晨或傍晚前往，感受寺庙的宁静与禅意。可顺道游览玄武湖。`,
+            show: false
+          },
+          {
+            name: '玄武湖景区',
+            audio: 'https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Ftts-mp3-20250612151644-AuzpyLAe.mp3?Expires=86401749712604&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=9XPB91or%2Bv%2FCbRcQm9EGMOYnKMs%3D',
+            detail: `<b>简介：</b>玄武湖位于南京市中心，是中国最大的皇家园林湖泊之一。湖面广阔，水天一色，湖中有五洲（环洲、樱洲、菱洲、梁洲、翠洲），洲洲相连，景色各异。<br><b>历史沿革：</b>玄武湖自六朝时期就是著名的风景区，历代文人墨客在此留下众多诗篇。现为国家5A级旅游景区。<br><b>主要看点：</b><ul><li>五洲风光：樱洲赏樱、梁洲观荷、翠洲林荫</li><li>湖心亭、情侣园、玄武门等地标</li><li>湖畔步道、骑行道，适合休闲漫步</li></ul><b>游玩建议：</b>适合全家出游、情侣漫步、摄影爱好者。春秋两季景色最佳。`,
+            show: false
+          },
+          {
+            name: '总统府',
+            audio: 'https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Ftts-mp3-20250612151649-kelJqHjW.mp3?Expires=86401749712609&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=%2BhzKU9z2hUPwpuDOhZdF%2FVwwCSg%3D',
+            detail: `<b>简介：</b>南京总统府位于市中心长江路292号，是中国近现代史上最重要的政治建筑之一。这里曾是太平天国天王府、清两江总督署、民国总统府等，见证了中国近代历史的风云变幻。<br><b>历史沿革：</b><ul><li>太平天国时期为天王府</li><li>清朝为两江总督署</li><li>1912年孙中山在此就任临时大总统</li><li>1949年前为国民政府总统府</li></ul><b>主要看点：</b><ul><li>总统府大门、主楼、子超楼、煦园等历史建筑</li><li>各类历史展览，丰富的文物资料</li><li>仿古园林与近代西式建筑交相辉映</li></ul><b>游玩建议：</b>建议提前预约，参观时可租用讲解器，了解丰富的历史故事。适合历史爱好者、学生群体。`,
+            show: false
+          },
+          {
+            name: '夫子庙秦淮风光带',
+            audio: 'https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Ftts-mp3-20250612151655-ftOcpVUJ.mp3?Expires=86401749712615&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=nbbT4E8YYilWCN0gkvjdNcOSuMk%3D',
+            detail: `<b>简介：</b>夫子庙秦淮风光带位于南京市秦淮区，是南京最具代表性的历史文化街区。以夫子庙为核心，沿秦淮河两岸分布众多古迹、园林、民俗街巷和美食小吃。<br><b>历史沿革：</b>秦淮河自古为南京"母亲河"，夫子庙始建于东晋，明清时期达到鼎盛，是中国四大文庙之一。<br><b>主要看点：</b><ul><li>夫子庙古建筑群、江南贡院、乌衣巷、白鹭洲公园</li><li>秦淮河夜游，灯火辉映，别有风情</li><li>各类南京特色小吃、民俗表演</li></ul><b>游玩建议：</b>傍晚至夜晚为最佳游览时段，可乘船夜游秦淮河，品尝地道美食，感受南京的烟火气与文化底蕴。`,
+            show: false
+          }
+        ],
+        currentAudio: null,
+        isPlaying: false,
+        audioEl: null,
+        toggleDetail(scenic) {
+          this.scenics.forEach(s => { if (s !== scenic) s.show = false; });
+          scenic.show = !scenic.show;
+        },
+        playAudio(url) {
+          if (!this.audioEl) this.audioEl = document.getElementById('audioPlayer');
+          if (this.currentAudio === url && this.isPlaying) {
+            this.audioEl.pause();
+            this.isPlaying = false;
+          } else {
+            if (this.currentAudio !== url) {
+              this.audioEl.src = url;
+              this.audioEl.currentTime = 0;
+            }
+            this.audioEl.play();
+            this.currentAudio = url;
+            this.isPlaying = true;
+          }
+        },
+        init() {
+          this.audioEl = document.getElementById('audioPlayer');
+          this.audioEl.addEventListener('ended', () => {
+            this.isPlaying = false;
+          });
+          this.audioEl.addEventListener('pause', () => {
+            this.isPlaying = false;
+          });
+          this.audioEl.addEventListener('play', () => {
+            this.isPlaying = true;
+          });
+        }
+      };
+    }
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('scenicAudioGuide', scenicAudioGuide);
+    });
+  </script>
+</body>
+</html> 
